@@ -1,6 +1,7 @@
 package com.example.bracesbuddy.data.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import com.example.bracesbuddy.data.model.Photos
 import kotlinx.coroutines.flow.Flow
@@ -12,4 +13,7 @@ interface PhotosDao {
 
     @Query("INSERT INTO photos (userId, photoUri, photoDate) VALUES (:userId, :path, :date)")
     suspend fun insertPhoto(userId: Int, path: String, date: String)
+
+    @Query("DELETE FROM photos WHERE id = :photoId")
+    suspend fun deletePhoto(photoId: Int)
 }

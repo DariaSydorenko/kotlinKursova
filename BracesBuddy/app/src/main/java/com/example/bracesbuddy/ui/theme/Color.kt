@@ -11,4 +11,6 @@ object Colors {
     val HighlightColor = Color(0xFFDB5959)
     val TransparentContainer = Color(0x80B3C1CE)
     val CalendarColor = Color(0xFFB3C1CE)
+    val NavBarColor = Color(0xFFFFE3E3)
+    val NavBarSelectColor = Color(0xFFF38F8F)
 }

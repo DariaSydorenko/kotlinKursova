@@ -12,9 +12,6 @@ interface VisitsDao {
     @Query("SELECT * FROM visits WHERE userId = :userId AND visitDate = :date LIMIT 1")
     suspend fun getVisitByDate(userId: Int, date: String): Visits?
 
-    @Query("SELECT COUNT(*) FROM visits WHERE userId = :userId AND visitDate = :date")
-    suspend fun hasVisit(userId: Long, date: String): Boolean
-
     @Query("SELECT EXISTS(SELECT 1 FROM visits WHERE userId = :userId AND visitDate = :date)")
     suspend fun hasVisit(userId: Int, date: String): Boolean
 
@@ -26,4 +23,7 @@ interface VisitsDao {
 
     @Query("DELETE FROM visits WHERE id = :visitId")
     suspend fun deleteVisit(visitId: Int)
+
+    @Query("SELECT * FROM visits WHERE userId = :userId AND visitDate LIKE :month || '%'")
+    suspend fun getVisitsInMonth(userId: Int, month: String): List<Visits>
 }

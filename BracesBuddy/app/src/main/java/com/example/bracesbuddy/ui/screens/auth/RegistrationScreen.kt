@@ -90,7 +90,8 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                             unfocusedContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Colors.TitleColor
                         )
                     )
 
@@ -111,21 +112,22 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                             unfocusedContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Colors.TitleColor
                         )
                     )
 
                     TextField(
                         value = password,
                         onValueChange = {
-                            if (it.length <= 20) password = it
+                            if (it.length in 4..20) password = it
                             coroutineScope.launch {
                                 passwordVisible = true
                                 delay(1000L)
                                 passwordVisible = false
                             }
                         },
-                        label = { Text("Пароль", style = Typography.labelMedium) },
+                        label = { Text("Пароль (від 4 до 20 символів)", style = Typography.labelMedium) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(20.dp))
@@ -140,7 +142,8 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                             unfocusedContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Colors.TitleColor
                         )
                     )
 
@@ -164,7 +167,8 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                             unfocusedContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Colors.TitleColor
                         )
                     )
 
@@ -211,7 +215,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                                 } else {
                                     Toast.makeText(
                                         navController.context,
-                                        "Невірний формат електронної пошти",
+                                        "Неправильний формат електронної пошти",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -226,7 +230,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(80.dp)
-                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp)),
+                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(50)),
                         colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
                     ) {
                         Text(
@@ -244,7 +248,6 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                             textAlign = TextAlign.Center
                         ),
                         modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
                             .clickable {
                                 navController.navigate("login")
                             }

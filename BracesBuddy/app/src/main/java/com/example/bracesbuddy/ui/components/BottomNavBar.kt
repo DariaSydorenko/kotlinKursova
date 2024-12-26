@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.bracesbuddy.ui.icons.Icons
 import androidx.compose.material3.Icon
+import com.example.bracesbuddy.ui.theme.Colors
 
 @Composable
 fun BottomNavBar(navController: NavController) {
@@ -36,7 +37,7 @@ fun BottomNavBar(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp)
-                .background(Color(0xFFFFE3E3))
+                .background(Colors.NavBarColor)
         ) {
             items.forEach { item ->
                 val isSelected = currentRoute == item.route
@@ -46,11 +47,11 @@ fun BottomNavBar(navController: NavController) {
                         .fillMaxHeight()
                         .border(
                             width = 1.dp,
-                            color = Color(0xFFF38F8F),
+                            color = Colors.NavBarSelectColor,
                             shape = RoundedCornerShape(0.dp)
                         )
                         .background(
-                            color = if (isSelected) Color(0xFFF38F8F) else Color(0xFFFFE3E3),
+                            color = if (isSelected) Colors.NavBarSelectColor else Colors.NavBarColor,
                             shape = RoundedCornerShape(0.dp)
                         )
                         .clickable(
@@ -68,7 +69,7 @@ fun BottomNavBar(navController: NavController) {
                     Icon(
                         painter = item.icon,
                         contentDescription = item.label,
-                        tint = Color(0xFF617D96),
+                        tint = Colors.TitleColor,
                         modifier = Modifier.size(35.dp)
                     )
                 }

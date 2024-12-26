@@ -15,4 +15,8 @@ object Icons {
     fun Settings() = painterResource(id = R.drawable.settings)
     @Composable
     fun Arrow() = painterResource(id = R.drawable.arrow)
+    @Composable
+    fun Delete() = painterResource(id = R.drawable.delete)
+    @Composable
+    fun Add() = painterResource(id = R.drawable.add)
 }

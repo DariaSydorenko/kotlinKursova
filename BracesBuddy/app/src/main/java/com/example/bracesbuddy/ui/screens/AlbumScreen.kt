@@ -9,15 +9,21 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -27,9 +33,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.bracesbuddy.data.database.AppDatabase
 import com.example.bracesbuddy.data.database.PhotosDao
 import com.example.bracesbuddy.data.database.UserPreferences
+import com.example.bracesbuddy.ui.icons.Icons
 import com.example.bracesbuddy.utils.savePhoto
 import com.example.bracesbuddy.ui.theme.Colors
 import com.example.bracesbuddy.ui.theme.Typography
+import kotlinx.coroutines.launch
 
 @Composable
 fun AlbumScreen(db: AppDatabase) {
@@ -53,11 +61,21 @@ fun AlbumScreen(db: AppDatabase) {
 
     val photos by photosDao.getAllPhotos(userId).collectAsState(initial = emptyList())
 
+    // Function to delete photo
+    fun deletePhoto(photoId: Int) {
+        coroutineScope.launch {
+            photosDao.deletePhoto(photoId)
+        }
+    }
+
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Colors.Background)
             .padding(horizontal = 24.dp)
+            .verticalScroll(scrollState)
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -74,11 +92,17 @@ fun AlbumScreen(db: AppDatabase) {
                 }
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp),
+                .height(80.dp)
+                .align(Alignment.CenterHorizontally)
+                .border(1.dp, Colors.TitleColor, RoundedCornerShape(50)),
             colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
         ) {
-            Text(text = "Додати фотографію", style = Typography.titleLarge)
+            Icon(
+                Icons.Add(),
+                contentDescription = "Додати фото",
+                tint = Colors.TitleColor,
+                modifier = Modifier.size(60.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -105,7 +129,7 @@ fun AlbumScreen(db: AppDatabase) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .padding(vertical = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
@@ -119,10 +143,31 @@ fun AlbumScreen(db: AppDatabase) {
                             },
                         contentScale = ContentScale.Crop
                     )
-                    Text(
-                        text = photo.photoDate,
-                        style = Typography.bodyMedium
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = photo.photoDate,
+                            style = Typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Button(
+                            onClick = { deletePhoto(photo.id) },
+                            colors = ButtonDefaults.buttonColors(containerColor = Colors.NavBarSelectColor),
+                            modifier = Modifier.border(1.dp, Colors.TitleColor, RoundedCornerShape(50)),
+                        ) {
+                            Icon(
+                                Icons.Delete(),
+                                contentDescription = "Видалити фото",
+                                tint = Colors.TitleColor,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

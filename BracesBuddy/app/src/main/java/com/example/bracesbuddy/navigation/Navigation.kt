@@ -17,7 +17,7 @@ fun Navigation(navController: NavHostController, db: AppDatabase, modifier: Modi
         composable("home") { HomeScreen(db) }
         composable("calendar") { CalendarScreen(db) }
         composable("album") { AlbumScreen(db) }
-        composable("settings") { SettingsScreen(navController, db) }
+        composable("settings") { SettingsScreen(db) }
         composable("login") { LoginScreen(navController, db, context) }
         composable("registration") { RegistrationScreen(navController, db) }
     }

@@ -1,6 +1,7 @@
 package com.example.bracesbuddy.ui.screens
 
 import android.app.TimePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,11 +40,20 @@ fun CalendarScreen(db: AppDatabase) {
     var selectedTime by remember { mutableStateOf("") }
     var visitName by remember { mutableStateOf("") }
     var isDialogOpen by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val visitsDao = db.visitsDao()
     val userId = UserPreferences.getUserId(context)
+
+    val visitsInMonth = remember(currentMonth) {
+        mutableStateOf(emptyList<Visits>())
+    }
+
+    LaunchedEffect(currentMonth) {
+        visitsInMonth.value = visitsDao.getVisitsInMonth(userId, currentMonth.toString())
+    }
 
     Box(
         modifier = Modifier
@@ -117,8 +127,7 @@ fun CalendarScreen(db: AppDatabase) {
                 }
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     val daysInMonth = currentMonth.lengthOfMonth()
                     val firstDayOfWeek = (currentMonth.atDay(1).dayOfWeek.value % 7 + 6) % 7
@@ -140,13 +149,20 @@ fun CalendarScreen(db: AppDatabase) {
                                         Box(modifier = Modifier.weight(1f)) {}
                                     } else {
                                         val date = currentMonth.atDay(currentDay)
+                                        val hasVisit = visitsInMonth.value.any { visit ->
+                                            visit.visitDate == date.toString()
+                                        }
 
                                         Box(
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .fillMaxHeight()
                                                 .background(
-                                                    color = if (date.isEqual(today)) Colors.SubtitleColor else Color.Transparent,
+                                                    color = when {
+                                                        date.isEqual(today) -> Colors.SubtitleColor
+                                                        hasVisit -> Colors.ButtonBackground // фон для дня з візитом
+                                                        else -> Color.Transparent
+                                                    }
                                                 )
                                                 .border(1.dp, Colors.CalendarColor)
                                                 .clickable {
@@ -157,7 +173,8 @@ fun CalendarScreen(db: AppDatabase) {
                                         ) {
                                             Text(
                                                 text = currentDay.toString(),
-                                                style = Typography.bodyMedium
+                                                style = Typography.bodyMedium,
+                                                color = if (hasVisit) Colors.Background else Colors.TitleColor
                                             )
                                         }
                                         currentDay++
@@ -187,7 +204,7 @@ fun CalendarScreen(db: AppDatabase) {
 
                         LaunchedEffect(selectedDate) {
                             selectedDate?.let { date ->
-                                val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                                 val formattedDate = date.format(formatter)
 
                                 val visit = visitsDao.getVisitByDate(userId, formattedDate)
@@ -211,7 +228,7 @@ fun CalendarScreen(db: AppDatabase) {
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 Text(
-                                    text = "${existingVisit.value?.visitName}\n" +
+                                    text = "\"${existingVisit.value?.visitName}\"\n" +
                                             "${existingVisit.value?.visitDate} о ${existingVisit.value?.visitTime}",
                                     style = Typography.bodyLarge,
                                     textAlign = TextAlign.Center
@@ -224,15 +241,43 @@ fun CalendarScreen(db: AppDatabase) {
 
                             if (isEditing.value) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    var visitName by remember { mutableStateOf("") }
+                                    var selectedTime by remember { mutableStateOf("") }
+
+                                    LaunchedEffect(selectedDate) {
+                                        selectedDate?.let { date ->
+                                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                            val formattedDate = date.format(formatter)
+
+                                            val currentVisit = visitsDao.getVisitByDate(userId, formattedDate)
+                                            currentVisit?.let {
+                                                visitName = it.visitName
+                                                selectedTime = it.visitTime
+                                            }
+                                        }
+                                    }
+
                                     TextField(
                                         value = visitName,
                                         onValueChange = { visitName = it },
-                                        label = { Text("Назва візиту", style = Typography.bodyMedium) },
+                                        label = {
+                                            Text(
+                                                "Назва візиту",
+                                                style = Typography.bodyMedium
+                                            )
+                                        },
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clip(RoundedCornerShape(20.dp))
-                                            .background(Color.Transparent, shape = RoundedCornerShape(20.dp))
-                                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp)),
+                                            .background(
+                                                Color.Transparent,
+                                                shape = RoundedCornerShape(20.dp)
+                                            )
+                                            .border(
+                                                1.dp,
+                                                Colors.TitleColor,
+                                                RoundedCornerShape(20.dp)
+                                            ),
                                         textStyle = Typography.bodyMedium,
                                         singleLine = true,
                                         colors = TextFieldDefaults.colors(
@@ -245,8 +290,6 @@ fun CalendarScreen(db: AppDatabase) {
                                     )
 
                                     Spacer(modifier = Modifier.height(14.dp))
-
-                                    var selectedTime by remember { mutableStateOf("") }
 
                                     val context = LocalContext.current
 
@@ -264,8 +307,15 @@ fun CalendarScreen(db: AppDatabase) {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clip(RoundedCornerShape(20.dp))
-                                            .background(Color.Transparent, shape = RoundedCornerShape(20.dp))
-                                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp))
+                                            .background(
+                                                Color.Transparent,
+                                                shape = RoundedCornerShape(20.dp)
+                                            )
+                                            .border(
+                                                1.dp,
+                                                Colors.TitleColor,
+                                                RoundedCornerShape(20.dp)
+                                            )
                                             .padding(16.dp)
                                             .clickable {
                                                 timePickerDialog.show()
@@ -284,7 +334,7 @@ fun CalendarScreen(db: AppDatabase) {
                                             if (visitName.isNotBlank() && selectedTime.isNotBlank()) {
                                                 coroutineScope.launch {
                                                     selectedDate?.let { date ->
-                                                        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                                                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                                                         val formattedDate = date.format(formatter)
 
                                                         visitsDao.updateVisit(
@@ -297,12 +347,21 @@ fun CalendarScreen(db: AppDatabase) {
                                                 }
                                                 isEditing.value = false
                                                 isDialogOpen = false
+                                                Toast.makeText(
+                                                    context,
+                                                    "Візит оновлено",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         },
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(60.dp)
-                                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(30.dp)),
+                                            .border(
+                                                1.dp,
+                                                Colors.TitleColor,
+                                                RoundedCornerShape(30.dp)
+                                            ),
                                         colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
                                     ) {
                                         Text("Зберегти зміни", style = Typography.bodyLarge)
@@ -315,8 +374,12 @@ fun CalendarScreen(db: AppDatabase) {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(60.dp)
-                                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(320.dp)),
-                                        colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
+                                            .border(
+                                                1.dp,
+                                                Colors.TitleColor,
+                                                RoundedCornerShape(320.dp)
+                                            ),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Colors.NavBarColor)
                                     ) {
                                         Text("Редагувати", style = Typography.bodyLarge)
                                     }
@@ -328,9 +391,11 @@ fun CalendarScreen(db: AppDatabase) {
                                             coroutineScope.launch {
                                                 existingVisit.value?.id?.let { visitId ->
                                                     visitsDao.deleteVisit(visitId)
+                                                    visitsInMonth.value = visitsDao.getVisitsInMonth(userId, currentMonth.toString())
                                                 }
                                             }
                                             isDialogOpen = false
+                                            Toast.makeText(context, "Візит видалено", Toast.LENGTH_SHORT).show()
                                         },
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -361,7 +426,10 @@ fun CalendarScreen(db: AppDatabase) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.Transparent, shape = RoundedCornerShape(20.dp))
+                                    .background(
+                                        Color.Transparent,
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
                                     .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp)),
                                 textStyle = Typography.bodyMedium,
                                 singleLine = true,
@@ -391,7 +459,10 @@ fun CalendarScreen(db: AppDatabase) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.Transparent, shape = RoundedCornerShape(20.dp))
+                                    .background(
+                                        Color.Transparent,
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
                                     .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp))
                                     .padding(16.dp)
                                     .clickable {
@@ -411,7 +482,7 @@ fun CalendarScreen(db: AppDatabase) {
                                     if (visitName.isNotBlank() && selectedTime.isNotBlank()) {
                                         coroutineScope.launch {
                                             selectedDate?.let { date ->
-                                                val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                                                 val formattedDate = date.format(formatter)
 
                                                 visitsDao.insertVisit(
@@ -420,9 +491,11 @@ fun CalendarScreen(db: AppDatabase) {
                                                     date = formattedDate,
                                                     time = selectedTime
                                                 )
+                                                visitsInMonth.value = visitsDao.getVisitsInMonth(userId, currentMonth.toString())
                                             }
                                         }
                                         isDialogOpen = false
+                                        Toast.makeText(context, "Візит додано", Toast.LENGTH_SHORT).show()
                                     }
                                 },
                                 modifier = Modifier

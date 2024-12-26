@@ -79,7 +79,8 @@ fun LoginScreen(navController: NavController, db: AppDatabase, context: Context)
                             unfocusedContainerColor = Colors.InputFieldBackground,
                             disabledContainerColor = Colors.InputFieldBackground,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Colors.TitleColor
                         )
                     )
 
@@ -110,7 +111,8 @@ fun LoginScreen(navController: NavController, db: AppDatabase, context: Context)
                             unfocusedContainerColor = Colors.InputFieldBackground,
                             disabledContainerColor = Colors.InputFieldBackground,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Colors.TitleColor
                         )
                     )
 
@@ -131,7 +133,7 @@ fun LoginScreen(navController: NavController, db: AppDatabase, context: Context)
                                 } else {
                                     Toast.makeText(
                                         navController.context,
-                                        "Невірні дані",
+                                        "Некоректні дані",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -140,7 +142,7 @@ fun LoginScreen(navController: NavController, db: AppDatabase, context: Context)
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(80.dp)
-                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp)),
+                            .border(1.dp, Colors.TitleColor, RoundedCornerShape(50)),
                         colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
                     ) {
                         Text(

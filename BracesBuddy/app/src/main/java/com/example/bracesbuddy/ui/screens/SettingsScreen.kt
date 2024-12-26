@@ -27,7 +27,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
 @Composable
-fun SettingsScreen(navController: NavController, db: AppDatabase) {
+fun SettingsScreen(db: AppDatabase) {
     val context = LocalContext.current
     val settingsDao = db.settingsDao()
     val coroutineScope = rememberCoroutineScope()
@@ -187,7 +187,8 @@ fun SettingsScreen(navController: NavController, db: AppDatabase) {
                     unfocusedContainerColor = Colors.InputFieldBackground,
                     disabledContainerColor = Colors.InputFieldBackground,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Colors.TitleColor
                 )
             )
 
@@ -222,7 +223,8 @@ fun SettingsScreen(navController: NavController, db: AppDatabase) {
                     unfocusedContainerColor = Colors.InputFieldBackground,
                     disabledContainerColor = Colors.InputFieldBackground,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Colors.TitleColor
                 )
             )
 
@@ -238,9 +240,11 @@ fun SettingsScreen(navController: NavController, db: AppDatabase) {
             TextField(
                 value = clinicPhone,
                 onValueChange = {
-                    clinicPhone = it
-                    coroutineScope.launch {
-                        settingsDao.updateClinicPhone(userId, clinicPhone)
+                    if (it.length <= 10) {
+                        clinicPhone = it
+                        coroutineScope.launch {
+                            settingsDao.updateClinicPhone(userId, clinicPhone)
+                        }
                     }
                 },
                 label = { Text("Номер телефону", style = Typography.labelMedium) },
@@ -249,7 +253,7 @@ fun SettingsScreen(navController: NavController, db: AppDatabase) {
                     .clip(RoundedCornerShape(20.dp))
                     .background(Color.Transparent, shape = RoundedCornerShape(20.dp))
                     .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp)),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 textStyle = Typography.bodyMedium,
                 singleLine = true,
                 colors = TextFieldDefaults.colors(
@@ -257,7 +261,8 @@ fun SettingsScreen(navController: NavController, db: AppDatabase) {
                     unfocusedContainerColor = Colors.InputFieldBackground,
                     disabledContainerColor = Colors.InputFieldBackground,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Colors.TitleColor
                 )
             )
 //
@@ -560,8 +565,8 @@ fun SettingsScreen(navController: NavController, db: AppDatabase) {
 
                 DatePickerDialog(
                     context,
-                    { _, selectedYear, selectedMonth, cleaningReminderTimes ->
-                        bracesDate = "$cleaningReminderTimes.${selectedMonth + 1}.$selectedYear"
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        bracesDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
 
                         coroutineScope.launch {
                             settingsDao.updateBracesDate(
@@ -589,8 +594,8 @@ fun SettingsScreen(navController: NavController, db: AppDatabase) {
 
                 DatePickerDialog(
                     context,
-                    { _, selectedYear, selectedMonth, cleaningReminderTimes ->
-                        val newRemovalDate = "$cleaningReminderTimes.${selectedMonth + 1}.$selectedYear"
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        val newRemovalDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
 
                         if (newRemovalDate != removalDate) {
                             removalDate = newRemovalDate

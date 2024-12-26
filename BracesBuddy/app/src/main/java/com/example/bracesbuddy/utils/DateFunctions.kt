@@ -5,7 +5,7 @@ import java.util.*
 
 fun parseDate(dateString: String): Date? {
     return try {
-        val format = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         format.parse(dateString)
     } catch (e: Exception) {
         e.printStackTrace()
@@ -14,7 +14,7 @@ fun parseDate(dateString: String): Date? {
 }
 
 fun formatDate(date: String): String {
-    val inputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
     return try {
         val parsedDate = inputFormat.parse(date)
