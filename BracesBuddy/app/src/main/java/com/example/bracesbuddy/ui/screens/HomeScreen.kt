@@ -88,7 +88,7 @@ fun HomeScreen(db: AppDatabase) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Дата встановлення брекетів не може бути в майбутньому!\nПеревірте дату і повертайтесь)",
+                text = "Дата встановлення брекетів не може бути в майбутньому!\nПеревірте дату в налаштуваннях і повертайтесь)",
                 style = Typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -103,7 +103,7 @@ fun HomeScreen(db: AppDatabase) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Неправильно вказано дані про встановлення/зняття брекетів!\nПеревірте дати і повертайтесь)",
+                text = "Неправильно вказано дані про встановлення/зняття брекетів!\nПеревірте дати налаштуваннях і повертайтесь)",
                 style = Typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -141,7 +141,7 @@ fun HomeScreen(db: AppDatabase) {
         ) {
             if (!showProgress) {
                 Text(
-                    text = "Заповнюй дату встановлення та орієнтовану дату зняття брекетів і повертайся сюди, щоб слідкувати за прогресом!",
+                    text = "Заповнюй дату встановлення та орієнтовану дату зняття брекетів в налаштуваннях і повертайся сюди, щоб слідкувати за прогресом!",
                     style = Typography.titleLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 16.dp).align(Alignment.Center)
