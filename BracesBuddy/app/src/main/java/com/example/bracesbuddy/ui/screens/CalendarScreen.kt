@@ -379,7 +379,7 @@ fun CalendarScreen(db: AppDatabase) {
                                                 Colors.TitleColor,
                                                 RoundedCornerShape(320.dp)
                                             ),
-                                        colors = ButtonDefaults.buttonColors(containerColor = Colors.NavBarColor)
+                                        colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
                                     ) {
                                         Text("Редагувати", style = Typography.bodyLarge)
                                     }
@@ -401,7 +401,7 @@ fun CalendarScreen(db: AppDatabase) {
                                             .fillMaxWidth()
                                             .height(60.dp)
                                             .border(1.dp, Colors.TitleColor, RoundedCornerShape(30.dp)),
-                                        colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
+                                        colors = ButtonDefaults.buttonColors(containerColor = Colors.NavBarColor)
                                     ) {
                                         Text("Видалити", style = Typography.bodyLarge)
                                     }

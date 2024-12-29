@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
 import com.example.bracesbuddy.data.database.AppDatabase
@@ -81,14 +82,21 @@ fun AlbumScreen(db: AppDatabase) {
 
         Button(
             onClick = {
-                if (permissionGranted) {
-                    pickPhotoLauncher.launch("image/*")
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                        pickPhotoLauncher.launch("image/*")
+                    } else {
                         (context as? ComponentActivity)?.let { activity ->
-                            activity.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+                            ActivityCompat.requestPermissions(
+                                activity,
+                                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                                1
+                            )
                         }
                     }
+                } else {
+                    pickPhotoLauncher.launch("image/*")
                 }
             },
             modifier = Modifier

@@ -292,7 +292,7 @@ fun HomeScreen(db: AppDatabase) {
                         horizontalAlignment = Alignment.Start
                     ){
                         Text(
-                            text = "Історія візитів",
+                            text = "Графік візитів",
                             style = Typography.titleLarge,
                         )
 
@@ -300,7 +300,7 @@ fun HomeScreen(db: AppDatabase) {
 
                         if (visits.isEmpty()) {
                             Text(
-                                text = "Ваша історія візитів порожня",
+                                text = " Ваш графік візитів порожній",
                                 style = Typography.bodyLarge,
                                 textAlign = TextAlign.Center
                             )

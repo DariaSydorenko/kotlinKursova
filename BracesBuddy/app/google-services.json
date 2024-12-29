@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "568952336457",
+    "project_id": "bracesbuddy-c4319",
+    "storage_bucket": "bracesbuddy-c4319.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568952336457:android:e1af59cad8e602d8528f98",
+        "android_client_info": {
+          "package_name": "com.example.bracesbuddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXtuDpCMGimFaOz4KR-0xKUAUPdwFPEDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

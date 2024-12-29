@@ -36,6 +36,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
     val userDao = db.userDao()
     val settingsDao = db.settingsDao()
     val coroutineScope = rememberCoroutineScope()
@@ -64,7 +65,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "РЕЄСТРАЦІЯ",
+                        text = "Реєстрація",
                         style = Typography.titleLarge
                     )
 
@@ -120,27 +121,27 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                     TextField(
                         value = password,
                         onValueChange = {
-                            if (it.length in 4..20) password = it
+                            if (it.length <= 20) password = it
                             coroutineScope.launch {
                                 passwordVisible = true
                                 delay(1000L)
                                 passwordVisible = false
                             }
                         },
-                        label = { Text("Пароль (від 4 до 20 символів)", style = Typography.labelMedium) },
+                        label = { Text("Пароль (від 4 до 20 символів)", style = Typography.labelMedium)},
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(Colors.InputFieldBackground)
+                            .background(Color.Transparent, shape = RoundedCornerShape(20.dp))
                             .border(1.dp, Colors.TitleColor, RoundedCornerShape(20.dp)),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         textStyle = Typography.bodyMedium,
                         singleLine = true,
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
+                            focusedContainerColor = Colors.InputFieldBackground,
+                            unfocusedContainerColor = Colors.InputFieldBackground,
+                            disabledContainerColor = Colors.InputFieldBackground,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                             cursorColor = Colors.TitleColor
@@ -151,6 +152,11 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                         value = confirmPassword,
                         onValueChange = {
                             if (it.length <= 20) confirmPassword = it
+                            coroutineScope.launch {
+                                confirmPasswordVisible = true
+                                delay(1000L)
+                                confirmPasswordVisible = false
+                            }
                         },
                         label = { Text("Повторно пароль", style = Typography.labelMedium) },
                         modifier = Modifier
@@ -161,7 +167,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         textStyle = Typography.bodyMedium,
                         singleLine = true,
-                        visualTransformation = PasswordVisualTransformation(),
+                        visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -234,7 +240,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                         colors = ButtonDefaults.buttonColors(containerColor = Colors.ButtonBackground)
                     ) {
                         Text(
-                            text = "Створити акаунт",
+                            text = "Створити",
                             style = Typography.titleLarge
                         )
                     }
