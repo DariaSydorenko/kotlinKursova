@@ -183,8 +183,9 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                             if (password == confirmPassword && password.length in 4..20) {
                                 if (isValidEmail(email)) {
                                     coroutineScope.launch {
-                                        val user = userDao.getUser(email, password)
-                                        if (user == null) {
+                                        // Перевірка чи існує користувач із такою електронною поштою
+                                        val existingUser = userDao.getUserByEmail(email)
+                                        if (existingUser == null) {
                                             val newUser = User(name = name, email = email, password = password)
                                             userDao.insertUser(newUser)
 
@@ -194,13 +195,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                                                 removalDate = "",
                                                 doctorName = "",
                                                 clinicName = "",
-                                                clinicPhone = "",
-//                                                cleaningRemindersCount = 0,
-//                                                cleaningReminderTimes = "[]",
-//                                                visitRemindersEnabled = false,
-//                                                visitReminderDaysBefore = "",
-//                                                photoRemindersEnabled = false,
-//                                                photoReminderFrequency = ""
+                                                clinicPhone = ""
                                             )
                                             settingsDao.insertSettings(defaultSettings)
 
@@ -213,7 +208,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                                         } else {
                                             Toast.makeText(
                                                 navController.context,
-                                                "Користувач з такою поштою вже існує",
+                                                "Користувач із такою поштою вже існує",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
@@ -244,6 +239,7 @@ fun RegistrationScreen(navController: NavController, db: AppDatabase) {
                             style = Typography.titleLarge
                         )
                     }
+
 
                     Spacer(modifier = Modifier.height(20.dp))
 
